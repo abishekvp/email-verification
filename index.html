@@ -28,6 +28,7 @@
     function frmid(id){
         return document.getElementById(id);
     }
+    
     $(document).ready(function() {
         $('#username').on('input', function() {
             if ($(this).val().indexOf(' ') !== -1) {
@@ -44,7 +45,7 @@
     function loged(){
         frmid("emailForm").style.display="none";
         frmid("logged").style.display="block";
-        frmid('usernamedata').innerHTML="Welcome "+window.localStorage.getItem('username').replace(":","");
+        frmid('usernamedata').innerHTML="Welcome "+window.localStorage.getItem('username');
     }
 
     emailjs.init("lscd6HIw5Fjyl4V6J");
@@ -60,7 +61,7 @@
             return;
         }
         const verificationCode = generateVerificationCode();
-        const verificationLink = `http://127.0.0.1:5500/index.html?code=${verificationCode}?username=${username}`;
+        const verificationLink = `${window.location.href}?code=${verificationCode}?username=${username}`;
 
         const templateParams = {
             to_email: email,
