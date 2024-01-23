@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akshay Kumar</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -24,29 +25,42 @@
     if(localStorage.getItem('username')===null){
     }else{loged()}
 
+    function frmid(id){
+        return document.getElementById(id);
+    }
+    $(document).ready(function() {
+        $('#username').on('input', function() {
+            if ($(this).val().indexOf(' ') !== -1) {
+                alert('Username must be without space');
+                this.value = this.value.replace(' ', '');
+            }
+        });
+    });
+
     function signout(){
         localStorage.clear();
         window.location.href = "index.html";
     }
     function loged(){
-        document.getElementById("emailForm").style.display="none";
-        document.getElementById("logged").style.display="block";
-        document.getElementById('usernamedata').innerHTML="Welcome "+window.localStorage.getItem('username');
+        frmid("emailForm").style.display="none";
+        frmid("logged").style.display="block";
+        frmid('usernamedata').innerHTML="Welcome "+window.localStorage.getItem('username').replace(":","");
     }
 
     emailjs.init("lscd6HIw5Fjyl4V6J");
 
     function sendVerificationLink() {
-        const emailInput = document.getElementById('email');
-        const username = document.getElementById('username').value;
+        const emailInput = frmid('email');
+        const username = frmid('username').value;
         const email = emailInput.value.trim();
 
+        
         if (!isValidEmail(email)) {
             alert('Please enter a valid email address.');
             return;
         }
         const verificationCode = generateVerificationCode();
-        const verificationLink = `http://127.0.0.1:5500/index.html?code=${verificationCode}&username=${username}`;
+        const verificationLink = `http://127.0.0.1:5500/index.html?code=${verificationCode}?username=${username}`;
 
         const templateParams = {
             to_email: email,
@@ -68,7 +82,7 @@
 
     function generateVerificationCode() {
         const length = 32;
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%*()-_=+[]{}|;:,.?';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#~%*()-_=+[]{}|;:.';
         let verificationCode = '';
 
         for (let i = 0; i < length; i++) {
