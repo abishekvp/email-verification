@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akshay Kumar</title>
+</head>
+<body>
+
+<form id="emailForm">
+    <label for="username">Username : </label>
+    <input type="text" id="username" placeholder="Username" required><br>
+    <label for="email">Email : </label>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <button type="button" onclick="sendVerificationLink()">Send Verification Link</button>
+</form>
+<div id="logged" style="display: none;">
+    <button id="signout" onclick="signout()">SignOut</button>
+    <h1>Welcome <span id="usernamedata"></span></h1>
+</div>
+
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+    if(localStorage.getItem('username')===null){
+    }else{loged()}
+
+    function signout(){
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+    function loged(){
+        document.getElementById("emailForm").style.display="none";
+        document.getElementById("logged").style.display="block";
+        document.getElementById('usernamedata').innerHTML=window.localStorage.getItem('username');
+    }
+
+    emailjs.init("lscd6HIw5Fjyl4V6J");
+
+    function sendVerificationLink() {
+        const emailInput = document.getElementById('email');
+        const username = document.getElementById('username').value;
+        const email = emailInput.value.trim();
+
+        if (!isValidEmail(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        const verificationCode = generateVerificationCode();
+        const verificationLink = `http://127.0.0.1:5500/verify.html?code=${verificationCode}&username=${username}`;
+
+        const templateParams = {
+            to_email: email,
+            verification_link: verificationLink
+        };
+        emailjs.send("service_zvgvl2g", "template_3n0owyp", templateParams)
+            .then(() => {
+                alert('Verification link sent. Please check your email.');
+            }, (error) => {
+                console.error('Error sending email:', error);
+                alert('Error sending verification link. Please try again.');
+            });
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function generateVerificationCode() {
+        const length = 32;
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%*()-_=+[]{}|;:,.?';
+        let verificationCode = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            verificationCode += characters.charAt(randomIndex);
+        }
+        return verificationCode;
+    }
+</script>
+
+</body>
+</html>
