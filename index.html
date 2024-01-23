@@ -16,7 +16,7 @@
 </form>
 <div id="logged" style="display: none;">
     <button id="signout" onclick="signout()">SignOut</button>
-    <h1>Welcome <span id="usernamedata"></span></h1>
+    <h1 id="usernamedata"></h1>
 </div>
 
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
@@ -31,7 +31,7 @@
     function loged(){
         document.getElementById("emailForm").style.display="none";
         document.getElementById("logged").style.display="block";
-        document.getElementById('usernamedata').innerHTML=window.localStorage.getItem('username');
+        document.getElementById('usernamedata').innerHTML="Welcome "+window.localStorage.getItem('username');
     }
 
     emailjs.init("lscd6HIw5Fjyl4V6J");
@@ -46,7 +46,7 @@
             return;
         }
         const verificationCode = generateVerificationCode();
-        const verificationLink = `http://127.0.0.1:5500/verify.html?code=${verificationCode}&username=${username}`;
+        const verificationLink = `http://127.0.0.1:5500/index.html?code=${verificationCode}&username=${username}`;
 
         const templateParams = {
             to_email: email,
@@ -77,6 +77,27 @@
         }
         return verificationCode;
     }
+
+    function getparameters(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function verifyEmail() {
+        const verificationCodeFromURL = getparameters('code');
+        const username = getparameters('username');
+        if (!verificationCodeFromURL) {
+            return;
+        }
+        window.localStorage.setItem('username',username);
+        window.location.href = "index.html";
+    }
+    window.onload = verifyEmail;
 </script>
 
 </body>
