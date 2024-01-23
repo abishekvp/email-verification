@@ -105,7 +105,7 @@
 
     function verifyEmail() {
         const verificationCodeFromURL = getparameters('code');
-        const username = getparameters('username');
+        const username = getparameters('username').replace(":","");
         if (!verificationCodeFromURL) {
             return;
         }
