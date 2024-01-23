@@ -50,6 +50,8 @@
 
     emailjs.init("lscd6HIw5Fjyl4V6J");
 
+
+    
     function sendVerificationLink() {
         const emailInput = frmid('email');
         const username = frmid('username').value;
@@ -69,7 +71,10 @@
         };
         emailjs.send("service_zvgvl2g", "template_3n0owyp", templateParams)
             .then(() => {
-                alert('Verification link sent. Please check your email.');
+                alert('Verification link sent, Check your email. Valid for 2 minutes');
+                var timer = setTimeout(function() {
+                    localStorage.clear();
+                }, 120000);
             }, (error) => {
                 console.error('Error sending email:', error);
                 alert('Error sending verification link. Please try again.');
@@ -90,27 +95,27 @@
             const randomIndex = Math.floor(Math.random() * characters.length);
             verificationCode += characters.charAt(randomIndex);
         }
+        localStorage.setItem("verificationCode",verificationCode);
         return verificationCode;
     }
 
-    function getparameters(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    function getparameters() {
+        var url = window.location.href;
+        var verificationLink=url.split("code=")[1].split("?")[0];
+        var username=url.split("username=")[1].replace(":","");
+        localStorage.setItem("verificationLink",verificationLink);
+        localStorage.setItem("username",username);
     }
 
     function verifyEmail() {
-        const verificationCodeFromURL = getparameters('code');
-        const username = getparameters('username').replace(":","");
-        if (!verificationCodeFromURL) {
-            return;
+        getparameters();
+        if (localStorage.getItem("verificationCode")===localStorage.getItem("verificationLink")) {
+            window.location.href = "index.html";
+        }else{
+            alert('Invalid verify link or link time exceed');
+            localStorage.removeItem('verificationLink');
+            localStorage.removeItem('username');
         }
-        window.localStorage.setItem('username',username);
-        window.location.href = "index.html";
     }
     window.onload = verifyEmail;
 </script>
