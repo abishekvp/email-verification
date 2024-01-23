@@ -1,1 +1,0 @@
-print(len('V%7D*tQ#G!:d;v7d[;3W-m+W%CC.~I=c1y'))
